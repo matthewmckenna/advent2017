@@ -48,7 +48,7 @@ def inverse_captcha_part_two(input_data: str) -> int:
 
 
 if __name__ == '__main__':
-    input_data = read_input_data('data/day_one.txt')
+    input_data = read_input_data('data/day01.txt')
     n_digits = 8
     print(f'displaying the first {n_digits} digits of the input')
 
