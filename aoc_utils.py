@@ -23,6 +23,12 @@ def read_tsv(filename: str) -> List[List[str]]:
     return rows
 
 
+def yield_lines(filename: str) -> Iterator[str]:
+    with open(filename, 'rt') as f:
+        for line in f:
+            yield line.strip()
+
+
 def flatten(iterable: Iterator[Iterator[Any]]) -> Iterator[Any]:
     """Flattens one level of nesting within an iterable."""
     return itertools.chain.from_iterable(iterable)
