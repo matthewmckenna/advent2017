@@ -3,8 +3,12 @@
 some utility functions for the advent of code 2017 challenge.
 """
 import csv
-from typing import Any, Iterator, List
+from typing import Any, Iterable, List, Reversible, Sized
 import itertools
+
+
+class IterableSequence(Iterable, Reversible, Sized):
+    """Custom type that supports `len()` and `reversed()` functions."""
 
 
 def read_input_data(filename: str) -> str:
@@ -23,17 +27,17 @@ def read_tsv(filename: str) -> List[List[str]]:
     return rows
 
 
-def yield_lines(filename: str) -> Iterator[str]:
+def yield_lines(filename: str) -> Iterable[str]:
     with open(filename, 'rt') as f:
         for line in f:
             yield line.strip()
 
 
-def flatten(iterable: Iterator[Iterator[Any]]) -> Iterator[Any]:
+def flatten(iterable: Iterable[Iterable[Any]]) -> Iterable[Any]:
     """Flattens one level of nesting within an iterable."""
     return itertools.chain.from_iterable(iterable)
 
 
-def reverse_enumerate(iterable: Iterator[Any]) -> Iterator[Any]:
+def reverse_enumerate(iterable: IterableSequence) -> Iterable[Any]:
     """Get an iterable which can be traversed and enumerated in reverse order."""
     return zip(range(len(iterable)-1, -1, -1), reversed(iterable))

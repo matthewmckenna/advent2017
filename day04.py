@@ -4,12 +4,12 @@ Day 4 of Advent of Code 2017
 http://adventofcode.com/2017/day/4
 """
 from collections import Counter
-from typing import Iterator
+from typing import Iterable
 
 from aoc_utils import yield_lines
 
 
-def count_valid_passphrases(lines: Iterator[str]) -> int:
+def count_valid_passphrases(lines: Iterable[str]) -> int:
     num_valid = 0
 
     for line in lines:
@@ -20,7 +20,7 @@ def count_valid_passphrases(lines: Iterator[str]) -> int:
     return num_valid
 
 
-def count_valid_inc_anagrams(lines: Iterator[str]) -> int:
+def count_valid_inc_anagrams(lines: Iterable[str]) -> int:
     num_valid = 0
 
     for line in lines:
