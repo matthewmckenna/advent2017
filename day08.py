@@ -4,7 +4,7 @@ Day 8 of Advent of Code 2017.
 http://adventofcode.com/2017/day/8
 """
 from collections import defaultdict
-from typing import DefaultDict, List, Tuple
+from typing import DefaultDict, Iterable, Tuple
 
 from aoc_utils import yield_lines
 
@@ -25,8 +25,8 @@ def split_instruction(instruction: str) -> Tuple[str, str, int, str]:
 
 
 def check_condition(registers: DefaultDict[str, int], condition: str) -> bool:
-    register, operator, value = condition.split()
-    value = int(value)
+    register, operator, str_value = condition.split()
+    value = int(str_value)
 
     return {
         '>': registers[register] > value,
@@ -38,7 +38,7 @@ def check_condition(registers: DefaultDict[str, int], condition: str) -> bool:
     }.get(operator, False)
 
 
-def process_instructions(instructions: List[str]) -> DefaultDict[str, int]:
+def process_instructions(instructions: Iterable[str]) -> DefaultDict[str, int]:
     instructions = instructions
     registers: DefaultDict[str, int] = defaultdict(int)
 
@@ -53,7 +53,7 @@ def process_instructions(instructions: List[str]) -> DefaultDict[str, int]:
     return registers
 
 
-def highest_value_held(instructions: List[str]) -> int:
+def highest_value_held(instructions: Iterable[str]) -> int:
     registers: DefaultDict[str, int] = defaultdict(int)
     highest_value = 0
 
@@ -74,9 +74,9 @@ def highest_value_held(instructions: List[str]) -> int:
 
 if __name__ == '__main__':
     filename = 'data/day08.txt'
-    lines = TEST_DATA.split('\n')
-    assert max(process_instructions(lines).values()) == 1
-    assert highest_value_held(lines) == 10
+    test_lines = TEST_DATA.split('\n')
+    assert max(process_instructions(test_lines).values()) == 1
+    assert highest_value_held(test_lines) == 10
 
     lines = yield_lines(filename)
     registers = process_instructions(lines)
