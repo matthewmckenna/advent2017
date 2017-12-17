@@ -3,17 +3,22 @@
 Day 10 of Advent of Code 2017.
 http://adventofcode.com/2017/day/10
 """
-from typing import Iterator, List, Tuple
+import functools
 import itertools
+import operator
+import string
+from typing import Iterator, List, Tuple
+
+from aoc_utils import sequence_blocks
 
 TEST_LIST = [0, 1, 2, 3, 4]
 TEST_LENGTHS = [3, 4, 1, 5]
 
+CHAR_TO_ASCII = {char: ord(char) for char in string.printable}
+
 
 def reverse_section(sequence: List[int], idx: int, length: int) -> Iterator[Tuple[int, int]]:
     """Get the indices and reversed section of `sequence`."""
-    # print(f'input: idx={idx} length={length} idx+length={idx+length}')
-
     if idx+length > len(sequence):
         excess = (idx+length) % len(sequence)
         selection = sequence[idx:] + sequence[:excess]
@@ -24,37 +29,57 @@ def reverse_section(sequence: List[int], idx: int, length: int) -> Iterator[Tupl
 
     reversed_selection = list(reversed(selection)) if selection else [sequence[idx]]
 
-    # print(f'selection={selection} reversed={reversed_selection} indices={indices}')
-
     return zip(indices, reversed_selection)
 
 
-def knot_hash(sequence: List[int], lengths: List[int]) -> int:
+def knot_hash(sequence: List[int], lengths: List[int], rounds: int = 1) -> List[int]:
     idx = skip = 0
     sequence_length = len(sequence)
-    # print(sequence)
 
-    for knot_length in lengths:
-        # print(f'idx={idx} knot_length={knot_length} skip={skip}')
-        indices_section = reverse_section(sequence, idx, knot_length)
+    for _ in range(rounds):
+        for knot_length in lengths:
+            indices_section = reverse_section(sequence, idx, knot_length)
 
-        for i, element in indices_section:
-            sequence[i] = element
+            for i, element in indices_section:
+                sequence[i] = element
 
-        idx = (idx+knot_length+skip) % sequence_length
+            idx = (idx+knot_length+skip) % sequence_length
+            skip += 1
 
-        # print(f'sequence now {sequence}. new idx={idx}\n')
+    return sequence
 
-        skip += 1
 
-    # print(sequence)
-    return sequence[0]*sequence[1]
+def knot_hash_hex(input_lengths: str, rounds: int) -> str:
+    additional_lengths = [17, 31, 73, 47, 23]
+    lengths = [CHAR_TO_ASCII[c] for c in input_lengths] + additional_lengths
+
+    sparse_hash = knot_hash(list(range(256)), lengths, rounds)
+    dense_hash = [
+        functools.reduce(operator.xor, block)
+        for block in sequence_blocks(sparse_hash, 16)
+    ]
+    hex_dense_hash = ''.join([f'{number:02x}' for number in dense_hash])
+
+    return hex_dense_hash
 
 
 if __name__ == '__main__':
     with open('data/day10.txt', 'rt') as f:
         lengths = [int(length) for length in f.read().strip().split(',')]
 
-    assert knot_hash(TEST_LIST, TEST_LENGTHS) == 12
+    test_output = knot_hash(TEST_LIST, TEST_LENGTHS)
+    assert test_output[0]*test_output[1] == 12
 
-    print(knot_hash(list(range(256)), lengths))
+    hash_output = knot_hash(list(range(256)), lengths)
+    print(hash_output[0]*hash_output[1])
+
+    # part two
+    with open('data/day10.txt', 'rt') as f:
+        int_lengths = f.read().strip()
+
+    assert knot_hash_hex('', rounds=64) == 'a2582a3a0e66e6e86e3812dcb672a272'
+    assert knot_hash_hex('AoC 2017', rounds=64) == '33efeb34ea91902bb2f59c9920caa6cd'
+    assert knot_hash_hex('1,2,3', rounds=64) == '3efbe78a8d82f29979031a4aa0b16a9d'
+    assert knot_hash_hex('1,2,4', rounds=64) == '63960835bcdc130f0b66d7ff4f6a5a8e'
+
+    print(knot_hash_hex(int_lengths, rounds=64))

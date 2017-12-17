@@ -41,3 +41,9 @@ def flatten(iterable: Iterable[Iterable[Any]]) -> Iterable[Any]:
 def reverse_enumerate(iterable: IterableSequence) -> Iterable[Any]:
     """Get an iterable which can be traversed and enumerated in reverse order."""
     return zip(range(len(iterable)-1, -1, -1), reversed(iterable))
+
+
+def sequence_blocks(sequence: List, blocksize: int) -> Iterable:
+    """Yield evenly sized blocks from a sequence."""
+    for i in range(0, len(sequence), blocksize):
+        yield sequence[i:i+blocksize]
