@@ -3,7 +3,7 @@
 some utility functions for the advent of code 2017 challenge.
 """
 import csv
-from typing import Any, DefaultDict, Iterable, List, Reversible, Sized
+from typing import Any, Iterable, List, Reversible, Sized
 import itertools
 
 
